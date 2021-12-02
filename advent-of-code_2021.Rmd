@@ -32,12 +32,36 @@ sum(dat$three_score_increase, na.rm = TRUE)
 # Day 2
 
 ```{r}
-# Part 1:
+dat <- rio::import(here::here("data", "day2.xlsx")) %>%
+  tidyr::separate(col = direction, 
+                  into = c("direction", "distance"),
+                  sep = " ") %>% 
+  mutate(distance = as.numeric(distance))
+```
 
+
+```{r}
+# Part 1:
+dat %>%
+  mutate(horizontal = ifelse(direction %in% c("forward"), distance, 0),
+         depth = ifelse(direction %in% c("up"), -distance,
+                        ifelse(direction %in% c("down"), distance, 0))) %>% 
+  summarize(horizontal = sum(horizontal),
+                  depth = sum(depth),
+                  position = sum(horizontal) * sum(depth))
 
 # Part 2:
-
-
+dat %>% 
+  mutate(forward = ifelse(direction %in% c("forward"), distance, 0),
+         adjust = ifelse(direction %in% c("up"), -distance,
+                        ifelse(direction %in% c("down"), distance, 0)),
+         horizontal = cumsum(forward),
+         aim = cumsum(adjust),
+         depth = cumsum(forward * aim))  %>% 
+  slice_tail(n = 1) %>% 
+  summarize(horizontal = horizontal,
+            depth = depth,
+            position = horizontal * depth)
 
 ```
 
