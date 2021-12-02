@@ -1,0 +1,43 @@
+---
+title: "Advent of Code 2021"
+date: "12/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+This Rmarkdown document will be used for the [2021 Advent of Code](https://adventofcode.com/2021)
+
+# Day 1
+
+```{r}
+dat <- rio::import(here::here("data", "depth.xlsx")) %>% 
+  mutate(increase = ifelse(dplyr::lead(depth) > depth, 1, 0),
+         three_score = depth + dplyr::lead(depth) + dplyr::lead(depth, n = 2),
+         three_score_increase = ifelse(dplyr::lead(three_score) > three_score, 1, 0))
+```
+
+```{r}
+# Part 1:
+sum(dat$increase, na.rm = TRUE)
+
+# Part2:
+sum(dat$three_score_increase, na.rm = TRUE)
+```
+
+----------------------------------------------------
+# Day 2
+
+```{r}
+# Part 1:
+
+
+# Part 2:
+
+
+
+```
+
