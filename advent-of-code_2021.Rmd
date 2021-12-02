@@ -14,7 +14,7 @@ This Rmarkdown document will be used for the [2021 Advent of Code](https://adven
 # Day 1
 
 ```{r}
-dat <- rio::import(here::here("data", "depth.xlsx")) %>% 
+dat <- rio::import(here::here("data", "depth.csv")) %>% 
   mutate(increase = ifelse(dplyr::lead(depth) > depth, 1, 0),
          three_score = depth + dplyr::lead(depth) + dplyr::lead(depth, n = 2),
          three_score_increase = ifelse(dplyr::lead(three_score) > three_score, 1, 0))
