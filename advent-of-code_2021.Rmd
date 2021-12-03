@@ -6,6 +6,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
 library(tidyverse)
 ```
 
@@ -63,5 +64,100 @@ dat %>%
             depth = depth,
             position = horizontal * depth)
 
+```
+
+----------------------------------------------------
+# Day 3
+
+```{r}
+dat <- rio::import(here::here("data", "day3.csv")) %>%
+  mutate(column = as.character(stringr::str_pad(column, 12, pad = "0"))) %>% 
+  tibble() %>% 
+  separate(column, 
+           into = c("d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", 
+                    "d10", "d11", "d12"), 
+           sep = "",
+           convert = TRUE) %>% 
+  select(-d0)
+```
+
+
+```{r}
+# Part 1:
+gamma <- dat %>%
+  summarize(across(.cols = everything(), ~mean(.x))) %>% 
+  mutate(across(.cols = everything(), ~ifelse(.x > .5, 1, 0))) %>% 
+  unite(col = "gamma", d1:d12, sep = "", remove = FALSE) %>% 
+  mutate(gamma_decimal = asbio::bin2dec(gamma)) %>% pull(gamma_decimal)
+
+epsilon <- dat %>%
+  summarize(across(.cols = everything(), ~mean(.x))) %>% 
+  mutate(across(.cols = everything(), ~ifelse(.x > .5, 0, 1))) %>% 
+  unite(col = "epsilon", d1:d12, sep = "", remove = FALSE) %>% 
+  mutate(epsilon_decimal = asbio::bin2dec(epsilon)) %>% pull(epsilon_decimal)
+
+gamma * epsilon
+
+# Part 2:
+
+or <- function(data, column) {
+  column = enquo(column)
+  if (nrow(data) != 1) {
+    data %>% 
+      filter(case_when(
+        mean(!!column) > .5 ~ !!column == 1,
+        mean(!!column) < .5 ~ !!column == 0,
+        mean(!!column) == .5 ~ !!column == 1,
+        TRUE ~ !!column == !!column))
+  } else {
+    data 
+  }
+}
+
+oxygen_rating <- or(dat, d1) %>% 
+  or(., d2) %>% 
+  or(., d3) %>% 
+  or(., d4) %>% 
+  or(., d5) %>% 
+  or(., d6) %>% 
+  or(., d7) %>% 
+  or(., d8) %>% 
+  or(., d9) %>% 
+  or(., d10) %>% 
+  or(., d11) %>% 
+  or(., d12) %>% 
+  unite(col = "or", d1:d12, sep = "", remove = FALSE) %>% 
+  mutate(oxygen_rating = asbio::bin2dec(or)) %>% pull(oxygen_rating)
+
+co <- function(data, column) {
+  column = enquo(column)
+  if (nrow(data) != 1) {
+    data %>% 
+    filter(case_when(
+      mean(!!column) > .5 ~ !!column == 0,
+      mean(!!column) < .5 ~ !!column == 1,
+      mean(!!column) == .5 ~ !!column == 0,
+      TRUE ~ !!column == !!column))
+  } else {
+    data
+  }
+}  
+
+scrubber_rating <- co(dat, d1) %>% 
+  co(., d2) %>% 
+  co(., d3) %>% 
+  co(., d4) %>% 
+  co(., d5) %>% 
+  co(., d6) %>% 
+  co(., d7) %>% 
+  co(., d8) %>% 
+  co(., d9) %>% 
+  co(., d10) %>% 
+  co(., d11) %>% 
+  co(., d12) %>% 
+  unite(col = "co", d1:d12, sep = "", remove = FALSE) %>% 
+  mutate(scrubber_rating = asbio::bin2dec(co)) %>% pull(scrubber_rating)
+
+oxygen_rating * scrubber_rating
 ```
 
