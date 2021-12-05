@@ -161,3 +161,310 @@ scrubber_rating <- co(dat, d1) %>%
 oxygen_rating * scrubber_rating
 ```
 
+----------------------------------------------------
+# Day 4
+
+```{r}
+bingo_list <- readRDS(here::here("data", "day4_bingo_list.rds"))
+
+dat <- rio::import(here::here("data", "day4.csv"), fill = TRUE) %>%
+  tibble() %>% 
+  separate(V1, 
+           into = c("V1", "V2", "V3", "V4", "V5"), 
+           convert = TRUE) %>% 
+  filter(complete.cases(.)) %>% 
+  mutate(group = as.factor(rep(1:100, each = 5))) %>% 
+  group_by(group) %>% 
+  mutate(V1_na = sum(is.na(V1)),
+         V2_na = sum(is.na(V2)),
+         V3_na = sum(is.na(V3)),
+         V4_na = sum(is.na(V4)),
+         V5_na = sum(is.na(V5))) %>% 
+  rowwise() %>% 
+  mutate(row_na = sum(is.na(c_across(cols = V1:V5))),
+         na_max = max(c_across(cols = contains("na")))) %>% ungroup()
+
+# Part 1
+
+bingo <- function(data = dat, number) {
+  if (max(data$na_max) == 5) {
+    group_win <- data %>% filter(na_max == 5) %>% select(group) %>% distinct() %>% pull() %>% as.character()
+    data %>% filter(group %in% group_win)
+  } else {
+  new_df <- data %>% 
+    mutate(V1 = na_if(V1, number),
+           V2 = na_if(V2, number),
+           V3 = na_if(V3, number),
+           V4 = na_if(V4, number),
+           V5 = na_if(V5, number)) %>% 
+    group_by(group) %>% 
+    mutate(V1_na = sum(is.na(V1)),
+           V2_na = sum(is.na(V2)),
+           V3_na = sum(is.na(V3)),
+           V4_na = sum(is.na(V4)),
+           V5_na = sum(is.na(V5))) %>% 
+    rowwise() %>% 
+    mutate(row_na = sum(is.na(c_across(cols = V1:V5))),
+           na_max = max(c_across(cols = contains("na")))) %>% 
+    ungroup()
+  print(number)
+  return(new_df)
+  }
+}  
+
+bingo_winning_hand <- dat %>% bingo(number = bingo_list[1]) %>% 
+  bingo(number = bingo_list[2]) %>% 
+  bingo(number = bingo_list[3]) %>% 
+  bingo(number = bingo_list[4]) %>% 
+  bingo(number = bingo_list[5]) %>% 
+  bingo(number = bingo_list[6]) %>% 
+  bingo(number = bingo_list[7]) %>% 
+  bingo(number = bingo_list[8]) %>% 
+  bingo(number = bingo_list[9]) %>% 
+  bingo(number = bingo_list[10]) %>% 
+  bingo(number = bingo_list[11]) %>% 
+  bingo(number = bingo_list[12]) %>% 
+  bingo(number = bingo_list[13]) %>% 
+  bingo(number = bingo_list[14]) %>% 
+  bingo(number = bingo_list[15]) %>% 
+  bingo(number = bingo_list[16]) %>% 
+  bingo(number = bingo_list[17]) %>% 
+  bingo(number = bingo_list[18]) %>% 
+  bingo(number = bingo_list[19]) %>% 
+  bingo(number = bingo_list[20]) %>% 
+  bingo(number = bingo_list[21]) %>% 
+  bingo(number = bingo_list[22]) %>% 
+  bingo(number = bingo_list[23]) %>% 
+  bingo(number = bingo_list[24]) %>% 
+  bingo(number = bingo_list[25]) %>% 
+  bingo(number = bingo_list[26]) %>% 
+  bingo(number = bingo_list[27]) %>% 
+  bingo(number = bingo_list[28]) %>% 
+  bingo(number = bingo_list[29]) %>% 
+  bingo(number = bingo_list[30]) %>% 
+  bingo(number = bingo_list[31]) %>% 
+  bingo(number = bingo_list[32]) %>% 
+  bingo(number = bingo_list[33]) %>% 
+  bingo(number = bingo_list[34]) %>% 
+  bingo(number = bingo_list[35]) %>% 
+  bingo(number = bingo_list[36]) %>% 
+  bingo(number = bingo_list[37]) %>% 
+  bingo(number = bingo_list[38]) %>% 
+  bingo(number = bingo_list[39]) %>% 
+  bingo(number = bingo_list[40]) %>%
+  bingo(number = bingo_list[41]) %>% 
+  bingo(number = bingo_list[42]) %>% 
+  bingo(number = bingo_list[43]) %>% 
+  bingo(number = bingo_list[44]) %>% 
+  bingo(number = bingo_list[45]) %>% 
+  bingo(number = bingo_list[46]) %>% 
+  bingo(number = bingo_list[47]) %>% 
+  bingo(number = bingo_list[48]) %>% 
+  bingo(number = bingo_list[49]) %>% 
+  bingo(number = bingo_list[50]) %>% 
+  bingo(number = bingo_list[51]) %>% 
+  bingo(number = bingo_list[52]) %>% 
+  bingo(number = bingo_list[53]) %>% 
+  bingo(number = bingo_list[54]) %>% 
+  bingo(number = bingo_list[55]) %>% 
+  bingo(number = bingo_list[56]) %>% 
+  bingo(number = bingo_list[57]) %>% 
+  bingo(number = bingo_list[58]) %>% 
+  bingo(number = bingo_list[59]) %>% 
+  bingo(number = bingo_list[60]) %>% 
+  bingo(number = bingo_list[61]) %>% 
+  bingo(number = bingo_list[62]) %>% 
+  bingo(number = bingo_list[63]) %>% 
+  bingo(number = bingo_list[64]) %>% 
+  bingo(number = bingo_list[65]) %>% 
+  bingo(number = bingo_list[66]) %>% 
+  bingo(number = bingo_list[67]) %>% 
+  bingo(number = bingo_list[68]) %>% 
+  bingo(number = bingo_list[69]) %>% 
+  bingo(number = bingo_list[70]) %>% 
+  bingo(number = bingo_list[71]) %>% 
+  bingo(number = bingo_list[72]) %>% 
+  bingo(number = bingo_list[73]) %>% 
+  bingo(number = bingo_list[74]) %>% 
+  bingo(number = bingo_list[75]) %>% 
+  bingo(number = bingo_list[76]) %>% 
+  bingo(number = bingo_list[77]) %>% 
+  bingo(number = bingo_list[78]) %>% 
+  bingo(number = bingo_list[79]) %>% 
+  bingo(number = bingo_list[80]) %>%
+  bingo(number = bingo_list[81]) %>% 
+  bingo(number = bingo_list[82]) %>% 
+  bingo(number = bingo_list[83]) %>% 
+  bingo(number = bingo_list[84]) %>% 
+  bingo(number = bingo_list[85]) %>% 
+  bingo(number = bingo_list[86]) %>% 
+  bingo(number = bingo_list[87]) %>% 
+  bingo(number = bingo_list[88]) %>% 
+  bingo(number = bingo_list[89]) %>% 
+  bingo(number = bingo_list[90]) %>% 
+  bingo(number = bingo_list[91]) %>% 
+  bingo(number = bingo_list[92]) %>% 
+  bingo(number = bingo_list[93]) %>% 
+  bingo(number = bingo_list[94]) %>% 
+  bingo(number = bingo_list[95]) %>% 
+  bingo(number = bingo_list[96]) %>% 
+  bingo(number = bingo_list[97]) %>% 
+  bingo(number = bingo_list[98]) %>% 
+  bingo(number = bingo_list[99]) %>% 
+  bingo(number = bingo_list[100]) 
+
+sum_winner <- bingo_winning_hand %>% 
+  select(V1:V5) %>% 
+  mutate(sum_row = sum(c_across(everything()), na.rm = TRUE)) %>% 
+  select(sum_row) %>% 
+  distinct() %>% 
+  pull()
+
+sum_winner * 74
+
+# Part 2
+
+loser <- function(data = dat, number) {
+  if (max(data$na_max) == 5) {
+    group_win <- data %>% filter(na_max == 5) %>% select(group) %>% distinct() %>% pull() %>% as.character()
+    new_df <- data %>% 
+      filter(!(group %in% group_win)) %>% 
+      mutate(V1 = na_if(V1, number),
+             V2 = na_if(V2, number),
+             V3 = na_if(V3, number),
+             V4 = na_if(V4, number),
+             V5 = na_if(V5, number)) %>% 
+      group_by(group) %>% 
+      mutate(V1_na = sum(is.na(V1)),
+             V2_na = sum(is.na(V2)),
+             V3_na = sum(is.na(V3)),
+             V4_na = sum(is.na(V4)),
+             V5_na = sum(is.na(V5))) %>% 
+      rowwise() %>% 
+      mutate(row_na = sum(is.na(c_across(cols = V1:V5))),
+             na_max = max(c_across(cols = contains("na")))) %>% 
+      ungroup()
+  print(number)
+  return(new_df)
+  } else {
+  new_df <- data %>% 
+    mutate(V1 = na_if(V1, number),
+           V2 = na_if(V2, number),
+           V3 = na_if(V3, number),
+           V4 = na_if(V4, number),
+           V5 = na_if(V5, number)) %>% 
+    group_by(group) %>% 
+    mutate(V1_na = sum(is.na(V1)),
+           V2_na = sum(is.na(V2)),
+           V3_na = sum(is.na(V3)),
+           V4_na = sum(is.na(V4)),
+           V5_na = sum(is.na(V5))) %>% 
+    rowwise() %>% 
+    mutate(row_na = sum(is.na(c_across(cols = V1:V5))),
+           na_max = max(c_across(cols = contains("na")))) %>% 
+    ungroup()
+  print(number)
+  return(new_df)
+  }
+}  
+
+loser_winning_hand <- dat %>% loser(number = bingo_list[1]) %>% 
+  loser(number = bingo_list[2]) %>% 
+  loser(number = bingo_list[3]) %>% 
+  loser(number = bingo_list[4]) %>% 
+  loser(number = bingo_list[5]) %>% 
+  loser(number = bingo_list[6]) %>% 
+  loser(number = bingo_list[7]) %>% 
+  loser(number = bingo_list[8]) %>% 
+  loser(number = bingo_list[9]) %>% 
+  loser(number = bingo_list[10]) %>% 
+  loser(number = bingo_list[11]) %>% 
+  loser(number = bingo_list[12]) %>% 
+  loser(number = bingo_list[13]) %>% 
+  loser(number = bingo_list[14]) %>% 
+  loser(number = bingo_list[15]) %>% 
+  loser(number = bingo_list[16]) %>% 
+  loser(number = bingo_list[17]) %>% 
+  loser(number = bingo_list[18]) %>% 
+  loser(number = bingo_list[19]) %>% 
+  loser(number = bingo_list[20]) %>% 
+  loser(number = bingo_list[21]) %>% 
+  loser(number = bingo_list[22]) %>% 
+  loser(number = bingo_list[23]) %>% 
+  loser(number = bingo_list[24]) %>% 
+  loser(number = bingo_list[25]) %>% 
+  loser(number = bingo_list[26]) %>% 
+  loser(number = bingo_list[27]) %>% 
+  loser(number = bingo_list[28]) %>% 
+  loser(number = bingo_list[29]) %>% 
+  loser(number = bingo_list[30]) %>% 
+  loser(number = bingo_list[31]) %>% 
+  loser(number = bingo_list[32]) %>% 
+  loser(number = bingo_list[33]) %>% 
+  loser(number = bingo_list[34]) %>% 
+  loser(number = bingo_list[35]) %>% 
+  loser(number = bingo_list[36]) %>% 
+  loser(number = bingo_list[37]) %>% 
+  loser(number = bingo_list[38]) %>% 
+  loser(number = bingo_list[39]) %>% 
+  loser(number = bingo_list[40]) %>%
+  loser(number = bingo_list[41]) %>% 
+  loser(number = bingo_list[42]) %>% 
+  loser(number = bingo_list[43]) %>% 
+  loser(number = bingo_list[44]) %>% 
+  loser(number = bingo_list[45]) %>% 
+  loser(number = bingo_list[46]) %>% 
+  loser(number = bingo_list[47]) %>% 
+  loser(number = bingo_list[48]) %>% 
+  loser(number = bingo_list[49]) %>% 
+  loser(number = bingo_list[50]) %>% 
+  loser(number = bingo_list[51]) %>% 
+  loser(number = bingo_list[52]) %>% 
+  loser(number = bingo_list[53]) %>% 
+  loser(number = bingo_list[54]) %>% 
+  loser(number = bingo_list[55]) %>% 
+  loser(number = bingo_list[56]) %>% 
+  loser(number = bingo_list[57]) %>% 
+  loser(number = bingo_list[58]) %>% 
+  loser(number = bingo_list[59]) %>% 
+  loser(number = bingo_list[60]) %>% 
+  loser(number = bingo_list[61]) %>% 
+  loser(number = bingo_list[62]) %>% 
+  loser(number = bingo_list[63]) %>% 
+  loser(number = bingo_list[64]) %>% 
+  loser(number = bingo_list[65]) %>% 
+  loser(number = bingo_list[66]) %>% 
+  loser(number = bingo_list[67]) %>% 
+  loser(number = bingo_list[68]) %>% 
+  loser(number = bingo_list[69]) %>% 
+  loser(number = bingo_list[70]) %>% 
+  loser(number = bingo_list[71]) %>% 
+  loser(number = bingo_list[72]) %>% 
+  loser(number = bingo_list[73]) %>% 
+  loser(number = bingo_list[74]) %>% 
+  loser(number = bingo_list[75]) %>% 
+  loser(number = bingo_list[76]) %>% 
+  loser(number = bingo_list[77]) %>% 
+  loser(number = bingo_list[78]) %>% 
+  loser(number = bingo_list[79]) %>% 
+  loser(number = bingo_list[80]) %>%
+  loser(number = bingo_list[81]) %>% 
+  loser(number = bingo_list[82]) %>% 
+  loser(number = bingo_list[83]) %>% 
+  loser(number = bingo_list[84]) %>% 
+  loser(number = bingo_list[85]) %>% 
+  loser(number = bingo_list[86]) %>% 
+  loser(number = bingo_list[87]) 
+
+sum_loser <- loser_winning_hand %>% 
+  select(V1:V5) %>% 
+  mutate(sum_row = sum(c_across(everything()), na.rm = TRUE)) %>% 
+  select(sum_row) %>% 
+  distinct() %>% 
+  pull()
+
+(sum_loser) * 41
+
+```
+ 
+ 
