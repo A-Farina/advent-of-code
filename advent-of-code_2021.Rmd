@@ -467,4 +467,48 @@ sum_loser <- loser_winning_hand %>%
 
 ```
  
- 
+----------------------------------------------------
+# Day 5
+
+```{r}
+dat <- rio::import(here::here("data", "day5.csv")) %>% 
+  set_names(c("x1", "y1", "y2")) %>% 
+  separate(y1, c("y1", "x2"), "->") %>%
+  mutate(across(.cols = c("x1", "y2"), ~str_remove(.x, '"')),
+         across(.cols = everything(), ~as.numeric(.x)),
+         line = row_number(),
+         type = case_when(
+           x1 == x2 ~ "verticle",
+           y1 == y2 ~ "horizontal",
+           TRUE ~ "diagonal"))
+
+# Part 1
+
+vert_hor <- dat %>% filter(type %in% c("verticle", "horizontal")) %>% 
+  group_by(line) %>% 
+  summarize(expand.grid(x = seq(x1, x2), y = seq(y1, y2))) %>% 
+  ungroup() 
+vert_hor %>% 
+  count(x, y) %>% 
+  count(n) %>% 
+  filter(n > 1) %>% 
+  pull(nn) %>% 
+  sum()
+  
+# Part 2
+
+diag <- dat %>% filter(type == "diagonal") %>% 
+  group_by(line) %>% 
+  summarize(x = seq(x1, x2),
+            y = seq(y1, y2)) %>% 
+  ungroup()
+diag %>% 
+  bind_rows(vert_hor, .) %>% 
+  count(x, y) %>% 
+  count(n) %>% 
+  filter(n > 1) %>% 
+  pull(nn) %>% 
+  sum()
+
+```
+
