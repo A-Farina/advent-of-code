@@ -530,22 +530,22 @@ growth <- function(data, total) {
   df <- data
   for (i in 1:total)
   {
-    day_name <- paste0("d", i)
-    last_name <- paste0("d", i-1)
-  
-    add <- df %>% dplyr::filter(.[[last_name]] == 0) %>% nrow()
-  
-    df <- df %>% 
-     mutate(!!day_name := case_when(
-       .[[last_name]] == 0 ~ 6,
-       TRUE ~ .[[last_name]] -1
-     ))
-  
-    df_2 <- rep(8, add) %>% tibble() %>% 
-      set_names(day_name)
-        
-    df <- df %>% 
-      bind_rows(., df_2)
+     day_name <- paste0("d", i)
+     last_name <- paste0("d", i-1)
+    
+     add <- df %>% dplyr::filter(.[[last_name]] == 0) %>% nrow()
+    
+     df <- df %>% 
+      mutate(!!day_name := case_when(
+        .[[last_name]] == 0 ~ 6,
+        TRUE ~ .[[last_name]] -1
+      ))
+    
+     df_2 <- rep(8, add) %>% tibble() %>% 
+       set_names(day_name)
+         
+     df <- df %>% 
+       bind_rows(., df_2)
 
   }
   return(df)
@@ -556,11 +556,83 @@ growth(dat, 80) %>% nrow()
 
 # Part 2
 
-growth(dat, 256) %>% nrow()
+dat_fill <- seq(0, 8, 1) %>% tibble() %>% 
+       set_names("init")
+
+df <- dat %>% rename(init = d0) %>% 
+  group_by(init) %>% summarize(d0 = n()) %>% 
+  left_join(dat_fill, .) %>% 
+  mutate(d0 = ifelse(is.na(d0), replace_na(0), d0))
+
+
+large_growth <- function(data, total) {
+  df <- data
+  for (i in 1:total)
+    {
+     day_name <- paste0("d", i)
+     last_name <- paste0("d", i-1)
+ 
+     add <- df %>% filter(init == 0) %>% pull(!!last_name)
+     
+     df <- df %>% 
+       mutate(!!day_name := lead(.[[last_name]])
+       )
+
+    df[[day_name]][7] <- df[[day_name]][7] + add
+    df[[day_name]][9] <- add
+
+  }
+  return(df)
+}
+
+large_growth(df, 256) %>% select(d256) %>% sum()
 
 ```
 
+----------------------------------------------------
+# Day 7
+
 ```{r}
+dat <- t(rio::import(here::here("data", "day7.txt"))) %>% 
+  tibble() %>% 
+  set_names("location")
+
+# Part 1
+
+ss <- 
+
+smallest_ss <- function(data, intercept) {
+  intercept <- enquo(intercept)
+  data %>% 
+    mutate(distance = abs(location - !!intercept)) %>% 
+    select(distance) %>% 
+    sum()
+  }
+
+tibble(intercept = seq(0, 1500, 1))  %>% 
+  mutate(total = purrr::map_dbl(intercept, ~smallest_ss(dat, .x))) %>%
+  select(total) %>% 
+  min()
+
+# Part 2
+
+smallest_ss <- function(data, intercept) {
+  intercept <- enquo(intercept)
+  
+  ss <- tibble(number = seq(0, 1500, 1))
+ 
+  data %>% 
+      mutate(distance = abs(location - !!intercept)) %>% 
+      left_join(., ss %>% mutate(fuel = cumsum(number)), 
+             by = c("distance" = "number")) %>% 
+    select(fuel) %>% 
+    sum(., na.rm = TRUE)
+  }
+
+tibble(intercept = seq(0, 1500, 1))  %>% 
+  mutate(total = purrr::map_dbl(intercept, ~smallest_ss(dat, .x))) %>%
+  select(total) %>% 
+  min()
 
 ```
 
